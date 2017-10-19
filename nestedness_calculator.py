@@ -51,7 +51,7 @@ class NestednessCalculator(object):
         :type mat: numpy.array
         """
         self.check_input_matrix_is_binary(mat)
-        self.check_degrees(mat)
+#        self.check_degrees(mat)
 
     @staticmethod
     def check_input_matrix_is_binary(mat):
@@ -113,6 +113,11 @@ class NestednessCalculator(object):
         neg_delta = (degrees != degrees[:, np.newaxis])
         deg_matrix = degrees * np.ones_like(po_mat)
         deg_minima = np.minimum(deg_matrix, deg_matrix.T)
+
+        # handle empty rows or columns which do not contributed to nestedness
+        # avoid division errors:
+        deg_minima[deg_minima == 0] = 1.
+
         n_pairs = po_mat[neg_delta] / (2. * deg_minima[neg_delta])
         return n_pairs.sum()
 
